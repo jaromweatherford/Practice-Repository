@@ -343,17 +343,23 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-   int diff = x ^ y;
-   int rightMask = diff | diff >> 1;
-   rightMask = diff | diff >> 2;
-   rightMask = diff | diff >> 4;
-   rightMask = diff | diff >> 8;
-   rightMask = diff | diff >> 16;
-   int leftMask = ~(rightMask >> 1) | (1 << 31);
-   int firstDiffMask = rightMask & leftMask;
-   int greaterMask = firstDiffMask & (x ^ (1 << 31)) & (y ^ ~(1 << 31));
-   int isGreater = !!greaterMask;
-  return isGreater;
+   int differences = x ^ y;
+   int rightMask = differences;
+   int firstDiff = 0;
+   int greaterMask = 0;
+   int isGreater = 0;
+   int left1Mask = 1 << 31;
+   rightMask = rightMask | (rightMask >> 1);
+   rightMask = rightMask | (rightMask >> 2);
+   rightMask = rightMask | (rightMask >> 4);
+   rightMask = rightMask | (rightMask >> 8);
+   rightMask = rightMask | (rightMask >> 16);
+
+   firstDiff = rightMask & (~(rightMask >> 1) | left1Mask);
+   greaterMask = firstDiff & (x ^ left1Mask);
+   isGreater = !!greaterMask;
+
+   return isGreater;
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
